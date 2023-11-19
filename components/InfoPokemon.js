@@ -21,7 +21,7 @@ const InfoPokemon = () => {
       <View style={[styles.infopokemonChild1, styles.infopokemonShadowBox]} />
       <Text style={styles.descricaoTexto}>
         With the long hairs on its back, this Pokémon takes in electricity from
-        other electric Pokémon. It stores what it absorbs in an electric sac.
+        other electric Pokémon. It stores what it absorbsaaaaaaa in an electric sac.
       </Text>
       <Text style={[styles.m, styles.mTypo]}>0.3 m</Text>
       <Text style={[styles.kg, styles.mTypo]}>3.3 kg</Text>
