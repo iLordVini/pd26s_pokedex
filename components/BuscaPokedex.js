@@ -5,18 +5,25 @@ import { Image } from "expo-image";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import InfoPokemon from "./InfoPokemon";
 import { TouchableOpacity, Touchable } from "react-native";
-import {alternarFavoritoFunc, teste} from '../componentes-back/funcoes'
+import {alternarFavoritoFunc, teste, verificarFavoritoFunc, excluirPokemonFavFunc} from '../componentes-back/funcoes'
 
 function BuscaPokedex ({route}){
 
-  var [nome, setNome] = useState('');
-  var [id, setId] = useState('');
-
-  //console.log(route.params.id)
-
-  async function alternarFav (){
-    await alternarFavoritoFunc(route.params.id, id, nome);
-    return
+  async function alternarFav (id, nome){
+    try {
+      const resultado = await verificarFavoritoFunc(route.params.id, id, nome);
+      console.log(resultado);
+      if (resultado == 1){
+        console.log("passoui aqui")
+        await alternarFavoritoFunc(route.params.id, id, nome);
+      }else{
+        console.log('era pra excluir')
+        await excluirPokemonFavFunc(route.params.id, id, nome);
+      }
+      return
+    } catch (error) {
+      console.error("Erro:", error);
+    }
   }
 
   return (
@@ -40,7 +47,7 @@ function BuscaPokedex ({route}){
         <View
           style={[styles.buscapokedexChild2, styles.buscapokedexChildLayout]}
         />
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Pikachu'); setId('0025')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
         <View
           style={[styles.buscapokedexChild3, styles.buscapokedexChildShadowBox3]}
         />
@@ -51,7 +58,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-12.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Pikachu'); setId('0025')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
         <View
           style={[styles.buscapokedexChild4, styles.buscapokedexChildShadowBox2]}
         />
@@ -62,7 +69,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-12.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Pikachu'); setId('0025')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
         <View
           style={[styles.buscapokedexChild5, styles.buscapokedexChildShadowBox1]}
         />
@@ -73,7 +80,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-12.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Pikachu'); setId('0025')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
         <View
           style={[styles.buscapokedexChild6, styles.buscapokedexChildShadowBox]}
         />
@@ -84,7 +91,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-12.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Electabuzz'); setId('0125')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0125', 'Electabuzz')}}>
         <View style={[styles.buscapokedexChild7, styles.iconChildPosition1]} />
         <Text style={[styles.text4, styles.textTypo1]}>#0125</Text>
         <Image
@@ -93,7 +100,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-5.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Electabuzz'); setId('0125')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0125', 'Electabuzz')}}>
         <View style={[styles.buscapokedexChild8, styles.iconChildPosition1]} />
         <Text style={[styles.text5, styles.textTypo1]}>#0125</Text>
         <Image
@@ -102,7 +109,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-5.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Electabuzz'); setId('0125')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0125', 'Electabuzz')}}>
         <View style={[styles.buscapokedexChild9, styles.iconChildPosition1]} />
         <Text style={[styles.text6, styles.textTypo1]}>#0125</Text>
         <Image
@@ -111,7 +118,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-5.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Electabuzz'); setId('0125')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0125', 'Electabuzz')}}>
         <View style={[styles.buscapokedexChild10, styles.iconChildPosition1]} />
         <Text style={[styles.text7, styles.textTypo1]}>#0125</Text>
         <Image
@@ -120,7 +127,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-5.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Togedemaru'); setId('0777')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0777', 'Togedemaru')}}>
         <View style={[styles.buscapokedexChild11, styles.iconChildPosition]} />
         <Text style={[styles.text8, styles.textTypo]}>#0777</Text>
         <Image
@@ -129,7 +136,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-11.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Togedemaru'); setId('0777')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0777', 'Togedemaru')}}>
         <View style={[styles.buscapokedexChild12, styles.iconChildPosition]} />
         <Text style={[styles.text9, styles.textTypo]}>#0777</Text>
         <Image
@@ -138,7 +145,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-11.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Togedemaru'); setId('0777')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0777', 'Togedemaru')}}>
         <View style={[styles.buscapokedexChild13, styles.iconChildPosition]} />
         <Text style={[styles.text10, styles.textTypo]}>#0777aa</Text>
         <Image
@@ -147,7 +154,7 @@ function BuscaPokedex ({route}){
           source={require("../assets/image-11.png")}
         />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Togedemaru'); setId('0777')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0777', 'Togedemaru')}}>
         <View style={[styles.buscapokedexChild14, styles.iconChildPosition]} />
         <Text style={[styles.text10, styles.textTypo]}>#0777</Text>
         <Image
@@ -157,7 +164,7 @@ function BuscaPokedex ({route}){
         />
         </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={() => {alternarFav(); setNome('Togedemaru'); setId('0777')}}>
+          <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0777', 'Togedemaru')}}>
           <View style={[styles.buscapokedexChild14, styles.iconChildPosition]}/>
           <Text style={[styles.text11, styles.textTypo]}>#0777</Text>
           <Image

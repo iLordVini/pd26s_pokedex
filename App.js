@@ -23,9 +23,7 @@ import {exibirFavoritoFunc} from './componentes-back/funcoes'
 
 console.log("RECOMPILANDOoooooooooooooooooooooooooooooooooooooooooooooooooo0000000000000000000000aaaaaaaaaaaaaaaassssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
 
-const IDsecao = 'LOD6pRjLBDOY4edt6y0YEeJHPmB2'
-
-  
+const IDsecao = 'BCJUSfpfSwN0HYDPUFUXoav7dPD2'
 
 function HomeScreen({ navigation }) {
   var teste = 'teste'
