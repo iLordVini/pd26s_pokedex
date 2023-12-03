@@ -5,20 +5,40 @@ import { Image } from "expo-image";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import InfoPokemon from "./InfoPokemon";
 import { TouchableOpacity, Touchable } from "react-native";
-import {alternarFavoritoFunc, teste, verificarFavoritoFunc, excluirPokemonFavFunc} from '../componentes-back/funcoes'
+import {alternarFavoritoFunc, teste, verificarFavoritoFunc, excluirPokemonFavFunc, validarSecao} from '../componentes-back/funcoes'
+import StackNavigator from '../StackNavigator';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-function BuscaPokedex ({route}){
+function BuscaPokedex ({route, navigation}){
+
+  let IDsecao
+
+  try {
+    IDsecao = route.params.id
+    console.log(id); // Esta linha nunca será alcançada se ocorrer um erro acima
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes("Cannot read property 'id' of undefined")) {
+      navigation.navigate('LoginUsuario')
+    } else {
+      // Outros tipos de erro
+      console.error("Ocorreu um erro:", error.message);
+    }
+  }
+  console.log(IDsecao)
+
+  //onPress={() => navigation.navigate("InfoPokemon",{id:IDsecao})}
 
   async function alternarFav (id, nome){
     try {
-      const resultado = await verificarFavoritoFunc(route.params.id, id, nome);
+      const resultado = await verificarFavoritoFunc(IDsecao, id, nome);
       console.log(resultado);
       if (resultado == 1){
         console.log("passoui aqui")
-        await alternarFavoritoFunc(route.params.id, id, nome);
+        await alternarFavoritoFunc(IDsecao, id, nome);
       }else{
         console.log('era pra excluir')
-        await excluirPokemonFavFunc(route.params.id, id, nome);
+        await excluirPokemonFavFunc(IDsecao, id, nome);
       }
       return
     } catch (error) {
@@ -47,7 +67,7 @@ function BuscaPokedex ({route}){
         <View
           style={[styles.buscapokedexChild2, styles.buscapokedexChildLayout]}
         />
-        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("LoginUsuario",{id:IDsecao})}>
         <View
           style={[styles.buscapokedexChild3, styles.buscapokedexChildShadowBox3]}
         />

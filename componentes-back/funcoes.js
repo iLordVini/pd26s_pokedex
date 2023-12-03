@@ -11,6 +11,7 @@ import {firebase_db, auth} from '../src/firebaseconfig';
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth'
 
 async function cadastrarUsuarioFunc(nome, email, senha){ //Funcao para cadastrar usuário, email tem que ser unico
+  return new Promise(async (resolve, reject) => {
   if (nome !== '' & email !== '' & senha !== ''){
     createUserWithEmailAndPassword(auth, email, senha)
     .then((userCredential) => {
@@ -19,27 +20,30 @@ async function cadastrarUsuarioFunc(nome, email, senha){ //Funcao para cadastrar
         });
         console.log('true')
         alert("Usuário:"+nome+" Registrado com sucesso!")
-        return true;
+        resolve (1);
     }).catch(() =>{
       alert('invalido')
-      return
+      resolve(0)
     })
   }else{
     alert("PREENCHA TODOS OS DADOS CORRETAMENTE!")
     return false;
   }
+});
 }
 
 async function logarUsuarioFunc(email, senha){ //Verifica os credenciais do usuário no banco, retorna "user" se existente
+  return new Promise(async (resolve, reject) => {
   signInWithEmailAndPassword(auth, email, senha)
   .then((userCredential) => {
-    const user = userCredential.user
+    const user = userCredential.user.uid
     console.log(user)
-    return (user)
+    resolve (user)
   }).catch(() =>{
     alert('invalido')
-    return
+    resolve (1)
   })
+  });
 }
 
 async function teste(){
@@ -102,6 +106,34 @@ function verificarFavoritoFunc(secao, pokemon_id, pokemon_name) { //verifica se 
   });
 }
 
+
+function validarSecao(secao) { //verifica se existe o pokemon declarado na lista de fav do usuário
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (pokemon_name !== '' && pokemon_id !== '') {
+        const verificar = ref(firebase_db, 'usuarios/' + secao + '/');
+        const snapshot = await get(verificar);
+        const data = snapshot.val();
+
+        console.log('oia aqui ====> ' + data);
+
+        if (data === null) {
+          console.log(1);
+          resolve(1);
+        } else {
+          console.log(2);
+          resolve(2);
+        }
+      } else {
+        console.error("pokemon_name e pokemon_id não podem ser vazios");
+        reject(new Error("Valores inválidos"));
+      }
+    } catch (error) {
+      console.error("Erro ao obter snapshot:", error);
+      reject(error);
+    }
+  });
+}
 
 
 //  function verificarFavoritoFunc(secao, pokemon_id, pokemon_name) {
@@ -167,10 +199,7 @@ async function excluirPokemonFavFunc(secao, pokemon_id, pokemon_name) { //exclui
 //  if (pokemon_name !== '' && pokemon_id !== ''){
 //      const verificar = await ref(firebase_db, 'usuarios/' + secao + '/pokemons_fav/' + pokemon_id + '/');
 //        onValue(verificar, (snapshot) => {
-//          var datajaexiste = snapshot.val();
-//          console.log("++++"+datajaexiste+"++")
-//            if (datajaexiste !== null) {
-//            remove(ref(firebase_db, 'usuarios/' + secao + '/pokemons_fav/' + pokemon_id))
+//          var datajaexiste = snapshot.val();validarSecao + '/pokemons_fav/' + pokemon_id))
 //              .then(() => {
 //                console.log("Dados excluídos com sucesso!");
 //              })
@@ -200,7 +229,7 @@ async function exibirFavoritoFunc(secao){ //exibe os fav do usuário
     });
 }
 
-export {cadastrarUsuarioFunc, logarUsuarioFunc, alternarFavoritoFunc, teste, exibirFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc};
+export {cadastrarUsuarioFunc, logarUsuarioFunc, alternarFavoritoFunc, teste, exibirFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc, validarSecao};
 
     /*
 
