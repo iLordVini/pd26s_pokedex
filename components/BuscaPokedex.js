@@ -9,6 +9,7 @@ import {alternarFavoritoFunc, teste, verificarFavoritoFunc, excluirPokemonFavFun
 import StackNavigator from '../StackNavigator';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useSwipe } from '../useSwipe'
 
 function BuscaPokedex ({route, navigation}){
 
@@ -46,8 +47,18 @@ function BuscaPokedex ({route, navigation}){
     }
   }
 
+  const { onTouchStart, onTouchEnd } = useSwipe(onSwipeLeft, onSwipeRight, 6)
+
+  function onSwipeLeft(){
+      
+  }
+
+  function onSwipeRight(){
+    navigation.navigate('CadastroUsuario',{id:IDsecao})
+  }
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={styles.container}>
       <View style={styles.buscapokedex}>
         <View style={styles.perfil} />
         <View style={styles.voltar} />
@@ -67,7 +78,7 @@ function BuscaPokedex ({route, navigation}){
         <View
           style={[styles.buscapokedexChild2, styles.buscapokedexChildLayout]}
         />
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("LoginUsuario",{id:IDsecao})}>
+        <TouchableOpacity style={styles.button} onPress={() => {alternarFav('0025', 'Pikachu')}}>
         <View
           style={[styles.buscapokedexChild3, styles.buscapokedexChildShadowBox3]}
         />

@@ -17,6 +17,8 @@ async function cadastrarUsuarioFunc(nome, email, senha){ //Funcao para cadastrar
     .then((userCredential) => {
       set(ref(firebase_db, 'usuarios/' + userCredential.user.uid), {
           username: nome,
+          email: email,
+          senha: senha
         });
         console.log('true')
         alert("Usuário:"+nome+" Registrado com sucesso!")
@@ -229,7 +231,29 @@ async function exibirFavoritoFunc(secao){ //exibe os fav do usuário
     });
 }
 
-export {cadastrarUsuarioFunc, logarUsuarioFunc, alternarFavoritoFunc, teste, exibirFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc, validarSecao};
+async function exibirEmail(secao){ //exibe os fav do usuário
+  return new Promise(async (resolve, reject) => { 
+  const verificar = await ref(firebase_db, 'usuarios/'+secao+'/email/');
+  onValue(verificar, (snapshot) => {
+    var datajaexiste = snapshot.val();
+    console.log(datajaexiste);
+    resolve (datajaexiste)
+    });
+  });
+}
+
+async function exibirNome(secao){ //exibe os fav do usuário
+  return new Promise(async (resolve, reject) => { 
+  const verificar = await ref(firebase_db, 'usuarios/'+secao+'/username/');
+  onValue(verificar, (snapshot) => {
+    var datajaexiste = snapshot.val();
+    console.log(datajaexiste);
+    resolve (datajaexiste)
+    });
+  });
+}
+
+export {cadastrarUsuarioFunc, logarUsuarioFunc, alternarFavoritoFunc, teste, exibirFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc, validarSecao, exibirEmail, exibirNome};
 
     /*
 
