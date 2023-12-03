@@ -8,36 +8,37 @@ import { initializeApp, apps, lenght } from "firebase/app";
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 import { getDatabase, ref, onValue, set, update, remove, push, orderByValue, limitToLast, once} from "firebase/database";
 import firebase_db from '../src/firebaseconfig';
-import {cadastrarUsuarioFunc} from '../componentes-back/funcoes'
+import {cadastrarUsuarioFunc, logarUsuarioFunc} from '../componentes-back/funcoes'
 import { useRoute } from "@react-navigation/core";
+import StackNavigator from '../StackNavigator';
 
 
-function CadastrarUsuario ({navigation, route}){
+function LogarUsuario ({navigation}){
 
-  var [nome, setNome] = useState('');
+  //var [nome, setNome] = useState('');
   var [email, setEmail] = useState('');
   var [senha, setSenha] = useState('');
 
-  const { itemID } = useRoute(route)
-  //console.log(route.params.id)
+  //const { itemID } = useRoute(route)
+  //onsole.log(route.params.id)
   //alert(itemID)
 
-  async function cadastrarUsuarioI(){
-    var verificar = await cadastrarUsuarioFunc(nome, email, senha);
-    if (verificar == 1){
-      navigation.navigate('LoginUsuario')
+  async function logarUsuarioI(){
+    var secao = await logarUsuarioFunc(email, senha);
+    console.log(secao)
+    if (secao != 1){
+      navigation.navigate("BuscaPokedex",{id: secao})
     }
   }
   
   return (
     <View style={StyleSheet.container}>
-        <Text style={{fontSize:30}}>Nome:</Text>
-        <TextInput value={nome} onChangeText={(texto) => setNome(texto)} style={styles.input} placeholder='Insira seu Nome'/> 
         <Text style={{fontSize:30}}>Email:</Text>
         <TextInput value={email} onChangeText={(texto) => setEmail(texto)} style={styles.input} placeholder='Insira seu Email'/> 
         <Text style={{fontSize:30}}>Senha:</Text>
         <TextInput value={senha} onChangeText={(texto) => setSenha(texto)} style={styles.input} placeholder='Insira sua Senha'/> 
-        <Button title="Cadastrar" onPress={cadastrarUsuarioI}/>
+        <Button title="Logar" onPress={logarUsuarioI}/>
+        <Button title="Cadastrar Usuário" onPress={() => navigation.navigate("CadastrarUsuario")}/>
     </View>
   );
 };
@@ -53,4 +54,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default CadastrarUsuario;
+export default LogarUsuario;

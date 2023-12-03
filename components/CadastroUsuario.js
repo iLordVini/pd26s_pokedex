@@ -2,10 +2,51 @@ import * as React from "react";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import StackNavigator from '../StackNavigator';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {exibirEmail, exibirNome} from "../componentes-back/funcoes";
+import { useSwipe } from '../useSwipe'
+import { useEffect, useState} from 'react';
 
-const CadastroUsuario = () => {
+const CadastroUsuario = ({route ,navigation}) => {
+  let IDsecao
+
+  const [email, setEmail] = useState('');
+  const [nome, setNome] = useState('');
+
+  try {
+    IDsecao = route.params.id
+    console.log(id); // Esta linha nunca será alcançada se ocorrer um erro acima
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes("Cannot read property 'id' of undefined")) {
+      navigation.navigate('LoginUsuario')
+    } else {
+      // Outros tipos de erro
+      console.error("Ocorreu um erro:", error.message);
+    }
+  }
+  console.log(IDsecao)
+
+  async function coletarInformacoe(){
+    setEmail(await exibirEmail(IDsecao));
+    setNome(await exibirNome(IDsecao));
+    console.log(nome, email)
+  }
+  coletarInformacoe()
+
+  const { onTouchStart, onTouchEnd } = useSwipe(onSwipeLeft, onSwipeRight, 6)
+
+  function onSwipeLeft(){
+    navigation.navigate('BuscaPokedex',{id:IDsecao})
+    console.log("oia aqui")
+  }
+
+  function onSwipeRight(){
+    
+  }
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={styles.container}>
     <View style={styles.cadastrousuario}>
       <View style={styles.perfil} />
       <Image
@@ -23,19 +64,12 @@ const CadastroUsuario = () => {
       <View
         style={[styles.cadastrousuarioInner, styles.cadastrousuarioShadowBox]}
       />
-      <Text style={[styles.ashgmailcom, styles.textTypo]}>{`ash@gmail.com
-`}</Text>
+      <Text style={[styles.ashgmailcom, styles.textTypo]}>{email}</Text>
       <Text style={[styles.eMail, styles.nomeTypo]}>E-MAIL</Text>
-      <Text style={[styles.text, styles.textTypo]}>22/05/1997</Text>
-      <Text style={[styles.dataDeNascimento, styles.nomeTypo]}>
-        DATA DE NASCIMENTO
-      </Text>
-      <Text style={[styles.ashDaSilva, styles.textTypo]}>{`Ash da Silva
-`}</Text>
+      <Text style={[styles.ashDaSilva, styles.textTypo]}>{nome}</Text>
       <Text style={[styles.nome, styles.nomeTypo]}>NOME</Text>
       <Text style={styles.informacoesUsuario}>INFORMAÇÕES DO USUÁRIO</Text>
-      <Text style={[styles.userid484, styles.ashk23Typo]}>USERID: 484</Text>
-      <Text style={[styles.ashk23, styles.ashk23Typo]}>AshK23</Text>
+      <Text style={[styles.ashk23, styles.ashk23Typo]}>{nome}</Text>
       <Text style={[styles.voltar1, styles.ashk23Typo]}>VOLTAR</Text>
       <View style={[styles.lineView, styles.lineViewPosition]} />
       <View style={[styles.cadastrousuarioChild1, styles.lineViewPosition]} />
@@ -169,12 +203,6 @@ const styles = StyleSheet.create({
     top: 670,
     width: 350,
     textAlign: "left",
-  },
-  dataDeNascimento: {
-    top: 637,
-    width: 350,
-    left: 62,
-    fontWeight: "700",
   },
   ashDaSilva: {
     top: 524,

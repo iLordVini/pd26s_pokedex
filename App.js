@@ -18,6 +18,7 @@ import 'firebase/database';
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth'
 import {auth} from './src/firebaseconfig'
 import {exibirFavoritoFunc} from './componentes-back/funcoes'
+import StackNavigator from './StackNavigator';
 
 
 
@@ -109,17 +110,23 @@ const App = () => {
     return null;
   }
 
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="InfoPokemon" component={InfoPokemon} />
-          <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
-          <Stack.Screen name="BuscaPokedex" component={BuscaPokedex} />
-          <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario}  />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
+    return (<StackNavigator />);
   };
+
+//  const StackNavigator = () => {
+//    return (
+//      <NavigationContainer>
+//        <Stack.Navigator initialRouteName="BuscaPokedex">
+//          <Stack.Screen name="Home" component={HomeScreen} />
+//          <Stack.Screen name="InfoPokemon" component={InfoPokemon} />
+//          <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
+//          <Stack.Screen name="BuscaPokedex" component={BuscaPokedex} />
+//          <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} />
+//        </Stack.Navigator>
+//      </NavigationContainer>
+//    );
+//  };
+  
   export default App;
+
   
