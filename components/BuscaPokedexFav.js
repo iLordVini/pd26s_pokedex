@@ -3,8 +3,8 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-nati
 import { Image } from 'expo-image';
 import axios from 'axios';
 import { Color, Border, FontSize, FontFamily } from '../GlobalStyles';
-import InfoPokemon from './InfoPokemon';
-import { obterListaFavoritos } from '../componentes-back/funcoes';
+import { obterListaFavoritos } from '../componentes-back/Functions';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function BuscaPokedexFav({ route, navigation }) {
   let IDsecao;
@@ -50,15 +50,14 @@ function BuscaPokedexFav({ route, navigation }) {
   const startIndex = (currentPage - 1) * pokemonsPerPage;
   const endIndex = startIndex + pokemonsPerPage;
   const visiblePokemons = pokemons.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(pokemons.length / pokemonsPerPage);
+  const totalPages = Math.max(1, Math.ceil(pokemons.length / pokemonsPerPage));
 
   const nextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
-
+  
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -77,7 +76,11 @@ function BuscaPokedexFav({ route, navigation }) {
   }
 
   function goBack() {
-    navigation.navigate('CadastroUsuario', { id: IDsecao });
+    navigation.navigate('CadastroUsuario', { id: IDsecao })
+  }
+
+  function goOut() {
+    navigation.navigate('LoginUsuario', { id: IDsecao })
   }
 
   function handleVerDetalhes(pokemonId, IDsecao) {
@@ -87,7 +90,13 @@ function BuscaPokedexFav({ route, navigation }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => goBack()} style={styles.iconContainer}>
+          <Icon name="user" size={30} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.pokedexTitle}>FAVORITOS</Text>
+        <TouchableOpacity onPress={() => goOut()} style={styles.iconContainer}>
+          <Icon name="sign-out" size={30} color="#fff" />
+        </TouchableOpacity>
       </View>
       <View style={styles.buscapokedex}>
         {visiblePokemons.map((pokemon) => (
@@ -112,11 +121,6 @@ function BuscaPokedexFav({ route, navigation }) {
           <Text style={styles.backButtonText}>{">"}</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>CADASTRO</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 }
@@ -127,15 +131,22 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhitesmoke,
   },
   header: {
-    backgroundColor: Color.colorBlack,
-    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#000',
+    padding: 12,
+    marginBottom: 12,
   },
   pokedexTitle: {
     fontSize: 36,
     fontWeight: '800',
     fontFamily: FontFamily.barlowExtraBold,
-    color: Color.colorWhite,
+    color: '#fff',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginHorizontal: 20,
   },
   buscapokedex: {
     flexDirection: 'row',
@@ -162,8 +173,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardImage: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
   },
   cardText: {
     marginTop: 8,
@@ -177,9 +188,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     padding: 4,
+    marginVertical: 20,
   },
   prevnextButton: {
-    paddingVertical: 4,
+    paddingVertical: 2,
     paddingHorizontal: 10,
     marginHorizontal: 8,
     backgroundColor: Color.colorBlack,
@@ -192,7 +204,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backButton: {
-    paddingVertical: 10,
+    marginTop: 0,
+    paddingVertical: 6,
     paddingHorizontal: 20,
     backgroundColor: Color.colorBlack,
     borderRadius: Border.br_17xl,

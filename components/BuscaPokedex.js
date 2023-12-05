@@ -1,13 +1,12 @@
 import * as React from "react";
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, Pressable } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import axios from 'axios';
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
-import InfoPokemon from "./InfoPokemon";
-import { TouchableOpacity, Touchable } from "react-native";
-import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/funcoes'
-
+import { TouchableOpacity } from "react-native";
+import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/Functions';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function BuscaPokedex({ route, navigation }) {
 
@@ -22,12 +21,11 @@ function BuscaPokedex({ route, navigation }) {
   useEffect(() => {
     const fetchPokemons = async () => {
       try {
-        const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=110&offset=100');
+        const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=120&offset=100');
         const results = response.data.results;
 
         const pokemonDetails = await Promise.all(results.map(async (pokemon) => {
           const pokemonResponse = await axios.get(pokemon.url);
-
           return {
             id: pokemonResponse.data.id,
             name: pokemon.name,
@@ -51,8 +49,7 @@ function BuscaPokedex({ route, navigation }) {
   const startIndex = (currentPage - 1) * pokemonsPerPage;
   const endIndex = startIndex + pokemonsPerPage;
   const visiblePokemons = pokemons.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(pokemons.length / pokemonsPerPage);
+  const totalPages = Math.max(1, Math.ceil(pokemons.length / pokemonsPerPage));
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -77,9 +74,6 @@ function BuscaPokedex({ route, navigation }) {
       console.error("Ocorreu um erro:", error.message);
     }
   }
-  console.log(IDsecao)
-
-  //onPress={() => navigation.navigate("InfoPokemon",{id:IDsecao})}
 
   async function alternarFav(id, nome) {
     try {
@@ -100,14 +94,24 @@ function BuscaPokedex({ route, navigation }) {
     navigation.navigate('CadastroUsuario', { id: IDsecao })
   }
 
+  function goOut() {
+    navigation.navigate('LoginUsuario', { id: IDsecao })
+  }
+
   function handleVerDetalhes(pokemonId, IDsecao) {
-    navigation.navigate('InfoPokemon', { pokemon: pokemonId, id: IDsecao});
+    navigation.navigate('InfoPokemon', { pokemon: pokemonId, id: IDsecao });
   }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => goBack()} style={styles.iconContainer}>
+          <Icon name="user" size={30} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.pokedexTitle}>POKEDEX</Text>
+        <TouchableOpacity onPress={() => goOut()} style={styles.iconContainer}>
+          <Icon name="sign-out" size={30} color="#fff" />
+        </TouchableOpacity>
       </View>
       <View style={styles.buscapokedex}>
         {visiblePokemons.map((pokemon) => (
@@ -132,11 +136,6 @@ function BuscaPokedex({ route, navigation }) {
           <Text style={styles.backButtonText}>{">"}</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>CADASTRO</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };
@@ -147,20 +146,27 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhitesmoke,
   },
   header: {
-    backgroundColor: Color.colorBlack,
-    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#000',
+    padding: 12,
+    marginBottom: 12,
   },
   pokedexTitle: {
     fontSize: 36,
     fontWeight: '800',
     fontFamily: FontFamily.barlowExtraBold,
-    color: Color.colorWhite,
+    color: '#fff',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginHorizontal: 20,
   },
   buscapokedex: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     padding: 4,
   },
   card: {
@@ -182,8 +188,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardImage: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
   },
   cardText: {
     marginTop: 8,
@@ -197,9 +203,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     padding: 4,
+    marginVertical: 20,
   },
   prevnextButton: {
-    paddingVertical: 4,
+    paddingVertical: 2,
     paddingHorizontal: 10,
     marginHorizontal: 8,
     backgroundColor: Color.colorBlack,
@@ -212,7 +219,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backButton: {
-    paddingVertical: 10,
+    marginTop: 0,
+    paddingVertical: 6,
     paddingHorizontal: 20,
     backgroundColor: Color.colorBlack,
     borderRadius: Border.br_17xl,
@@ -220,7 +228,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: FontSize.size_9xl,
     color: Color.colorWhite,
-    fontFamily: FontFamily.barlowBold,
+    fontFamily: FontFamily.barlowRegular,
     fontWeight: '700',
   },
 });

@@ -1,7 +1,9 @@
 import * as React from "react";
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
-import { Color, FontFamily, FontSize } from "../GlobalStyles";
-import { logarUsuarioFunc } from '../componentes-back/funcoes';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, LogBox } from "react-native";
+import { Color, FontSize } from "../GlobalStyles";
+import { logarUsuarioFunc } from '../componentes-back/Functions';
+
+LogBox.ignoreLogs(['@firebase/auth']);
 
 function LogarUsuario({ navigation }) {
   const [email, setEmail] = React.useState('vini@teste.com');

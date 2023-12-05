@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
-import { cadastrarUsuarioFunc } from '../componentes-back/funcoes';
+import { cadastrarUsuarioFunc } from '../componentes-back/Functions';
 
 function CadastrarUsuario({ navigation }) {
 

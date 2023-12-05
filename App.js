@@ -1,24 +1,9 @@
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import InfoPokemon from "./components/InfoPokemon";
-import CadastroUsuario from "./components/CadastroUsuario";
-import BuscaPokedex from "./components/BuscaPokedex";
-import BuscaPokedexFav from "./components/BuscaPokedexFav";
-import CadastrarUsuario from "./components/CadastrarUsuario"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
-import { color } from "react-native-reanimated";
-import firebase_db from './src/firebaseconfig';
-import { useEffect, useState} from 'react';
-import { initializeApp, apps, lenght } from "firebase/app";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getDatabase, ref, onValue, set } from "firebase/database";
-//import firebase from 'firebase/app';
 import 'firebase/database';
-import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth'
-import {auth} from './src/firebaseconfig'
-import {exibirFavoritoFunc} from './componentes-back/funcoes'
+import {exibirFavoritoFunc} from './componentes-back/Functions'
 import StackNavigator from './StackNavigator';
 
 function HomeScreen({ navigation }) {
@@ -98,7 +83,6 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
 
-  //const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
   const [fontsLoaded, error] = useFonts({
     "Barlow-Regular": require("./assets/fonts/Barlow-Regular.ttf"),
     "Barlow-SemiBold": require("./assets/fonts/Barlow-SemiBold.ttf"),

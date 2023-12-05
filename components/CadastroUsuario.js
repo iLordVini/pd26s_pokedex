@@ -1,13 +1,9 @@
 import * as React from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import StackNavigator from '../StackNavigator';
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { exibirEmail, exibirNome, exibirBirthday } from "../componentes-back/funcoes";
-import { useEffect, useState } from 'react';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { exibirEmail, exibirNome, exibirBirthday } from "../componentes-back/Functions";
+import { useState } from 'react';
 
 const CadastroUsuario = ({ route, navigation }) => {
   let IDsecao;
@@ -53,13 +49,6 @@ const CadastroUsuario = ({ route, navigation }) => {
           contentFit="cover"
           source={require("../assets/image-1.png")}
         />
-        <TouchableOpacity style={styles.starIcon} onPress={goFav}>
-          <Image
-            style={styles.starIcon}
-            contentFit="cover"
-            source={require("../assets/star-1.png")}
-          />
-        </TouchableOpacity>
         <View style={[styles.cadastrousuarioChild, styles.cadastrousuarioShadowBox]} />
         <View style={[styles.cadastrousuarioItem, styles.cadastrousuarioShadowBox]} />
         <View style={[styles.cadastrousuarioInner, styles.cadastrousuarioShadowBox]} />
@@ -77,10 +66,19 @@ const CadastroUsuario = ({ route, navigation }) => {
         <Text style={[styles.verPokemonsFavoritos, styles.verPokemonsFavoritos]}>
           VER POKÉMON’S FAVORITOS
         </Text>
+        <TouchableOpacity style={styles.starIcon} onPress={goFav}>
+          <Image
+            style={styles.starIcon}
+            contentFit="cover"
+            source={require("../assets/star-1.png")}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => goPokedex()} style={styles.backButton}>
+          <Image style={styles.pokemonIcon} source={require('../assets/image-12.png')} />
           <Text style={styles.backButtonText}>POKEDEX</Text>
+          <Image style={styles.pokemonIcon2} source={require('../assets/image-12.png')} />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -127,7 +125,21 @@ const styles = StyleSheet.create({
     marginTop: -75,
     paddingBottom: 8,
   },
+  pokemonIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+  },
+  pokemonIcon2: {
+    width: 30,
+    height: 30,
+    marginLeft: 8,
+    transform: [{ scaleX: -1 }],
+  },
   backButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: Color.colorBlack,
@@ -285,8 +297,8 @@ const styles = StyleSheet.create({
     top: 407,
   },
   starIcon: {
-    top: 317,
-    left: 166,
+    top: 160,
+    alignSelf: "center",
     width: 60,
     height: 60,
     position: "absolute",

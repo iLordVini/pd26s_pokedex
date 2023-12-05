@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-nati
 import axios from "axios";
 import { Image } from "expo-image";
 import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
-import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/funcoes'
+import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/Functions'
 
 const InfoPokemon = ({ route, navigation }) => {
   const pokemonId = route.params.pokemon;
@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backButton: {
-    paddingVertical: 10,
+    marginTop: 0,
+    paddingVertical: 6,
     paddingHorizontal: 20,
     backgroundColor: Color.colorBlack,
     borderRadius: Border.br_17xl,
