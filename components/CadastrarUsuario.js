@@ -1,56 +1,95 @@
-import * as React from "react";
-import { StyleSheet, View, Text, ScrollView, Button } from "react-native";
-import { Image } from "expo-image";
-import { Border, Color, FontFamily, FontSize, } from "../GlobalStyles";
-import { TextInput } from "react-native-gesture-handler";
-import { useEffect, useState} from 'react';
-import { initializeApp, apps, lenght } from "firebase/app";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getDatabase, ref, onValue, set, update, remove, push, orderByValue, limitToLast, once} from "firebase/database";
-import firebase_db from '../src/firebaseconfig';
-import {cadastrarUsuarioFunc} from '../componentes-back/funcoes'
-import { useRoute } from "@react-navigation/core";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
+import { cadastrarUsuarioFunc } from '../componentes-back/funcoes';
 
+function CadastrarUsuario({ navigation }) {
 
-function CadastrarUsuario ({navigation, route}){
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [birthday, setBirthday] = useState('');
 
-  var [nome, setNome] = useState('');
-  var [email, setEmail] = useState('');
-  var [senha, setSenha] = useState('');
-
-  const { itemID } = useRoute(route)
-  //console.log(route.params.id)
-  //alert(itemID)
-
-  async function cadastrarUsuarioI(){
-    var verificar = await cadastrarUsuarioFunc(nome, email, senha);
-    if (verificar == 1){
-      navigation.navigate('LoginUsuario')
+  async function cadastrarUsuarioI() {
+    const verificar = await cadastrarUsuarioFunc(nome, email, senha, birthday);
+    if (verificar === 1) {
+      navigation.navigate('LoginUsuario');
     }
   }
-  
+
   return (
-    <View style={StyleSheet.container}>
-        <Text style={{fontSize:30}}>Nome:</Text>
-        <TextInput value={nome} onChangeText={(texto) => setNome(texto)} style={styles.input} placeholder='Insira seu Nome'/> 
-        <Text style={{fontSize:30}}>Email:</Text>
-        <TextInput value={email} onChangeText={(texto) => setEmail(texto)} style={styles.input} placeholder='Insira seu Email'/> 
-        <Text style={{fontSize:30}}>Senha:</Text>
-        <TextInput value={senha} onChangeText={(texto) => setSenha(texto)} style={styles.input} placeholder='Insira sua Senha'/> 
-        <Button title="Cadastrar" onPress={cadastrarUsuarioI}/>
+    <View style={styles.container}>
+      <Text style={styles.title}>Cadastro</Text>
+      <View style={styles.form}>
+        <TextInput
+          value={nome}
+          onChangeText={(texto) => setNome(texto)}
+          style={styles.input}
+          placeholder='Nome'
+        />
+        <TextInput
+          value={email}
+          onChangeText={(texto) => setEmail(texto)}
+          style={styles.input}
+          placeholder='E-mail'
+        />
+        <TextInput
+          value={senha}
+          onChangeText={(texto) => setSenha(texto)}
+          style={styles.input}
+          placeholder='Senha'
+          secureTextEntry
+        />
+         <TextInput
+          value={birthday}
+          onChangeText={(texto) => setBirthday(texto)}
+          style={styles.input}
+          placeholder='Data de Nascimento (dd/mm/aaaa)'
+        />
+        <TouchableOpacity style={styles.button} onPress={cadastrarUsuarioI}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  input:{
-    fontSize:20,
-    margin:10,
-    borderColor:'#000',
-    borderWidth: 2,
-    height:40,
-    padding:10
-  }
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: Color.colorWhite,
+  },
+  title: {
+    fontSize: FontSize.size_3xl,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: Color.colorBlack,
+  },
+  input: {
+    height: 40,
+    borderColor: Color.colorBlack,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingLeft: 10,
+  },
+  label: {
+    fontSize: FontSize.size_lg,
+    marginVertical: 5,
+    fontFamily: FontFamily.barlowRegular,
+  },
+  button: {
+    backgroundColor: Color.colorBlack,
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: Color.colorWhite,
+    textAlign: 'center',
+  },
+});
 
 export default CadastrarUsuario;

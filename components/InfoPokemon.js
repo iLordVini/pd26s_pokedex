@@ -1,44 +1,138 @@
-import * as React from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import axios from "axios";
 import { Image } from "expo-image";
 import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
+import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/funcoes'
 
-const InfoPokemon = () => {
+const InfoPokemon = ({ route, navigation }) => {
+  const pokemonId = route.params.pokemon;
+  let IDsecao;
+  const [favorito, setFavorito] = useState(false);
+
+  const [pokemonDetails, setPokemonDetails] = useState({
+    id: null,
+    name: '',
+    height: null,
+    weight: null,
+    description: '',
+    image: null,
+    xp: null,
+    types: '',
+  });
+
+  useEffect(() => {
+    const fetchPokemonDetails = async () => {
+      try {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+        const speciesResponse = await axios.get(response.data.species.url);
+
+        const types = response.data.types.map((type) => type.type.name);
+        const firstTwoTypes = types.slice(0, 2);
+
+        const flavorText = speciesResponse.data.flavor_text_entries
+          .find((entry) => entry.language.name === 'en')
+          .flavor_text.replace(/\n/g, ' ');
+
+        const updatedPokemonDetails = {
+          id: response.data.id,
+          name: response.data.name,
+          height: response.data.height / 10 + ' m',
+          weight: response.data.weight / 10 + ' kg',
+          description: flavorText,
+          image: response.data.sprites.front_default,
+          xp: response.data.base_experience,
+          types: firstTwoTypes,
+        };
+        console.log(flavorText);
+
+        setPokemonDetails(updatedPokemonDetails);
+
+        console.log(updatedPokemonDetails.id + ' ' + updatedPokemonDetails.name)
+        const isFavorito = await verificarFavoritoFunc(IDsecao, updatedPokemonDetails.id, updatedPokemonDetails.name);
+        setFavorito(isFavorito === 2);
+      } catch (error) {
+        console.error('Erro ao buscar dados do Pokémon: ' + error);
+      }
+    };
+
+    fetchPokemonDetails();
+    
+  }, [pokemonId]);
+
+  try {
+    IDsecao = route.params.id
+    console.log(IDsecao);
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes("Cannot read property 'id' of undefined")) {
+      navigation.navigate('LoginUsuario')
+    } else {
+      console.error("Ocorreu um erro:", error.message);
+    }
+  }
+
+  function goBack() {
+    navigation.navigate('BuscaPokedex', { id: IDsecao })
+  }
+
+  function toggleFavorito() {
+      if (!pokemonDetails || !pokemonDetails.id || !pokemonDetails.name) {
+        console.error('Detalhes do Pokémon não carregados corretamente.');
+        return;
+      }  
+
+      if (favorito) {
+        excluirPokemonFavFunc(IDsecao, pokemonDetails.id, pokemonDetails.name);
+      } else {
+        alternarFavoritoFunc(IDsecao, pokemonDetails.id, pokemonDetails.name);
+      }
+
+      setFavorito(!favorito); // Alterna o estado local de favorito
+  }
+
+
   return (
     <ScrollView style={styles.container}>
-    <View style={styles.infopokemon}>
-      <View style={styles.perfil} />
+      <View style={styles.infopokemon}>
+        <View style={styles.perfil} />
+        <Image
+          style={[styles.image1Icon, styles.n0777Layout]}
+          contentFit="cover"
+          source={{ uri: pokemonDetails.image }}
+        />
+        <TouchableOpacity style={styles.starIcon} onPress={toggleFavorito}>
       <Image
-        style={[styles.image1Icon, styles.n0777Layout]}
+        style={styles.starIcon}
         contentFit="cover"
-        source={require("../assets/image-11.png")}
+        source={favorito ? require("../assets/star-1.png") : require("../assets/star-0.png")}
       />
-      <View style={[styles.voltar, styles.voltarShadowBox]} />
-      <View style={[styles.infopokemonChild, styles.rectangleViewShadowBox]} />
-      <View style={[styles.infopokemonItem, styles.infopokemonShadowBox]} />
-      <View style={[styles.infopokemonInner, styles.voltarShadowBox]} />
-      <View style={[styles.rectangleView, styles.rectangleViewShadowBox]} />
-      <View style={[styles.infopokemonChild1, styles.infopokemonShadowBox]} />
-      <Text style={styles.descricaoTexto}>
-        With the long hairs on its back, this Pokémon takes in electricity from
-        other electric Pokémon. It stores what it absorbsaaaaaaa in an electric sac.
-      </Text>
-      <Text style={[styles.m, styles.mTypo]}>0.3 m</Text>
-      <Text style={[styles.kg, styles.mTypo]}>3.3 kg</Text>
-      <Text style={styles.descricao}>DESCRIÇÃO</Text>
-      <Text style={styles.informacoesPokemon}>INFORMAÇÕES DO POKÉMON</Text>
-      <Text style={[styles.n0777, styles.n0777Typo]}>Nº 0777</Text>
-      <Text style={[styles.togedemaru, styles.n0777Typo]}>{`Togedemaru`}</Text>
-      <Text style={[styles.voltar1, styles.n0777Typo]}>VOLTAR</Text>
-      <View style={[styles.lineView, styles.lineViewPosition]} />
-      <View style={[styles.infopokemonChild2, styles.lineViewPosition]} />
-      <Text style={[styles.eletric, styles.steelTypo]}>ELETRIC</Text>
-      <Text style={[styles.steel, styles.steelTypo]}>STEEL</Text>
-      <Text style={[styles.cp, styles.cpTypo]}>CP</Text>
-      <Text style={[styles.text, styles.cpTypo]}>1493</Text>
-      <Text style={[styles.altura, styles.pesoTypo]}>ALTURA</Text>
-      <Text style={[styles.peso, styles.pesoTypo]}>PESO</Text>
-    </View>
+      </TouchableOpacity>
+        <View style={[styles.infopokemonChild, styles.rectangleViewShadowBox]} />
+        <View style={[styles.infopokemonItem, styles.infopokemonShadowBox]} />
+        <View style={[styles.infopokemonInner, styles.voltarShadowBox]} />
+        <View style={[styles.rectangleView, styles.rectangleViewShadowBox]} />
+        <View style={[styles.infopokemonChild1, styles.infopokemonShadowBox]} />
+        <Text style={styles.descricaoTexto}>{pokemonDetails.description}</Text>
+        <Text style={[styles.m, styles.mTypo]}>{pokemonDetails.height}</Text>
+        <Text style={[styles.kg, styles.mTypo]}>{pokemonDetails.weight}</Text>
+        <Text style={styles.descricao}>DESCRIÇÃO</Text>
+        <Text style={styles.informacoesPokemon}>INFORMAÇÕES DO POKÉMON</Text>
+        <Text style={[styles.n0777, styles.n0777Typo]}>Nº {pokemonDetails.id}</Text>
+        <Text style={[styles.togedemaru, styles.n0777Typo]}>{pokemonDetails.name}</Text>
+        <View style={[styles.lineView, styles.lineViewPosition]} />
+        <View style={[styles.infopokemonChild2, styles.lineViewPosition]} />
+        <Text style={[styles.eletric, styles.steelTypo]}>{pokemonDetails.types[0]}</Text>
+        <Text style={[styles.steel, styles.steelTypo]}>{pokemonDetails.types[1]}</Text>
+        <Text style={[styles.cp, styles.cpTypo]}>XP</Text>
+        <Text style={[styles.text, styles.cpTypo]}> {pokemonDetails.xp}</Text>
+        <Text style={[styles.altura, styles.pesoTypo]}>ALTURA</Text>
+        <Text style={[styles.peso, styles.pesoTypo]}>PESO</Text>
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>VOLTAR</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -52,6 +146,13 @@ const styles = StyleSheet.create({
     width: 240,
     left: 75,
   },
+  starIcon: {
+    top: "27%",
+    alignSelf: "center",
+    height: 40,
+    width: 40,
+    position: "absolute",
+  },
   voltarShadowBox: {
     shadowOpacity: 1,
     elevation: 4,
@@ -63,6 +164,25 @@ const styles = StyleSheet.create({
     shadowColor: "rgba(0, 0, 0, 0.25)",
     borderRadius: Border.br_17xl,
     position: "absolute",
+  },
+  footer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -80,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  backButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Color.colorBlack,
+    borderRadius: Border.br_17xl,
+  },
+  backButtonText: {
+    fontSize: FontSize.size_9xl,
+    color: Color.colorWhite,
+    fontFamily: FontFamily.barlowBold,
+    fontWeight: '700',
   },
   rectangleViewShadowBox: {
     borderWidth: 1,
@@ -101,7 +221,7 @@ const styles = StyleSheet.create({
   mTypo: {
     width: 104,
     top: 682,
-    height: 21,
+    height: 24,
     textAlign: "left",
     color: Color.colorBlack,
     fontFamily: FontFamily.barlowRegular,
@@ -128,10 +248,11 @@ const styles = StyleSheet.create({
     top: 351,
     fontFamily: FontFamily.barlowBold,
     fontWeight: "700",
-    textAlign: "left",
+    textAlign: "center",
     color: Color.colorBlack,
     fontSize: FontSize.size_lg,
     position: "absolute",
+    width: 100,
   },
   cpTypo: {
     fontFamily: FontFamily.barlowSemiBold,
@@ -158,7 +279,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   image1Icon: {
-    top: 45,
+    top: 35,
     borderRadius: Border.br_37xl,
     height: 218,
     position: "absolute",
@@ -187,7 +308,7 @@ const styles = StyleSheet.create({
   },
   infopokemonInner: {
     top: 340,
-    backgroundColor: Color.colorKhaki,
+    backgroundColor: Color.colorWhite,
     width: 131,
     height: 45,
     left: 61,
@@ -204,14 +325,14 @@ const styles = StyleSheet.create({
   },
   descricaoTexto: {
     top: 503,
-    height: 400,
+    height: 120,
     color: Color.colorBlack,
     fontFamily: FontFamily.barlowRegular,
     fontSize: FontSize.size_lg,
-    textAlign: "left",
     left: 68,
-    width: 240,
-    position: "absolute",
+    width: 250,
+    textAlign: "left",
+    lineHeight: 21,
   },
   m: {
     left: 68,
@@ -278,10 +399,10 @@ const styles = StyleSheet.create({
     top: 407,
   },
   eletric: {
-    left: 92,
+    left: 75,
   },
   steel: {
-    left: 237,
+    left: 215,
   },
   cp: {
     top: 21,

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import InfoPokemon from "./components/InfoPokemon";
 import CadastroUsuario from "./components/CadastroUsuario";
 import BuscaPokedex from "./components/BuscaPokedex";
+import BuscaPokedexFav from "./components/BuscaPokedexFav";
 import CadastrarUsuario from "./components/CadastrarUsuario"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
@@ -20,14 +21,7 @@ import {auth} from './src/firebaseconfig'
 import {exibirFavoritoFunc} from './componentes-back/funcoes'
 import StackNavigator from './StackNavigator';
 
-
-
-console.log("RECOMPILANDOoooooooooooooooooooooooooooooooooooooooooooooooooo0000000000000000000000aaaaaaaaaaaaaaaassssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
-
-const IDsecao = 'BCJUSfpfSwN0HYDPUFUXoav7dPD2'
-
 function HomeScreen({ navigation }) {
-  var teste = 'teste'
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Menu</Text>
@@ -55,6 +49,12 @@ function HomeScreen({ navigation }) {
       >
         <Text style={styles.buttonText}>BuscaPokedex</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("BuscaPokedexFav",{id:IDsecao})}
+      >
+        <Text style={styles.buttonText}>BuscaPokedexFav</Text>
+        </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => exibirFavoritoFunc(IDsecao)}
@@ -112,20 +112,6 @@ const App = () => {
 
     return (<StackNavigator />);
   };
-
-//  const StackNavigator = () => {
-//    return (
-//      <NavigationContainer>
-//        <Stack.Navigator initialRouteName="BuscaPokedex">
-//          <Stack.Screen name="Home" component={HomeScreen} />
-//          <Stack.Screen name="InfoPokemon" component={InfoPokemon} />
-//          <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
-//          <Stack.Screen name="BuscaPokedex" component={BuscaPokedex} />
-//          <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} />
-//        </Stack.Navigator>
-//      </NavigationContainer>
-//    );
-//  };
   
   export default App;
 

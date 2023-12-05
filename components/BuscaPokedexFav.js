@@ -1,48 +1,47 @@
-import * as React from "react";
-import { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, Pressable } from "react-native";
-import { Image } from "expo-image";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import axios from 'axios';
-import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
-import InfoPokemon from "./InfoPokemon";
-import { TouchableOpacity, Touchable } from "react-native";
-import { alternarFavoritoFunc, verificarFavoritoFunc, excluirPokemonFavFunc } from '../componentes-back/funcoes'
+import { Color, Border, FontSize, FontFamily } from '../GlobalStyles';
+import InfoPokemon from './InfoPokemon';
+import { obterListaFavoritos } from '../componentes-back/funcoes';
 
-
-function BuscaPokedex({ route, navigation }) {
-
-  let IDsecao
-
-  /*const pokemons = [
-    { id: '0025', name: 'Pikachu', image: require('../assets/image-12.png') },
-    { id: '0125', name: 'Electabuzz', image: require('../assets/image-5.png') },
-    { id: '0777', name: 'Togedemaru', image: require('../assets/image-11.png') },
-  ];*/
+function BuscaPokedexFav({ route, navigation }) {
+  let IDsecao;
 
   useEffect(() => {
     const fetchPokemons = async () => {
       try {
-        const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=110&offset=100');
-        const results = response.data.results;
+        const listaFavoritos = await obterListaFavoritos(IDsecao);
+        console.log(listaFavoritos);
+        const pokemonDetails = await Promise.all(
+          listaFavoritos.map(async (pokemon) => {
+            try {
+              console.log(pokemon.id);
+              const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
 
-        const pokemonDetails = await Promise.all(results.map(async (pokemon) => {
-          const pokemonResponse = await axios.get(pokemon.url);
-
-          return {
-            id: pokemonResponse.data.id,
-            name: pokemon.name,
-            image: pokemonResponse.data.sprites.front_default,
-          };
-        }));
-
-        setPokemons(pokemonDetails);
+              return {
+                id: pokemonResponse.data.id,
+                name: pokemonResponse.data.name,
+                image: pokemonResponse.data.sprites.front_default,
+              };
+            } catch (error) {
+              console.error(`Erro ao buscar detalhes do Pokémon ${pokemon.id}:`, error);
+              return null;
+            }
+          })
+        );
+  
+        const filteredPokemonDetails = pokemonDetails.filter((pokemon) => pokemon !== null);
+  
+        setPokemons(filteredPokemonDetails);
       } catch (error) {
-        console.error('Erro ao buscar dados dos Pokémon:', error);
+        console.error('Erro ao buscar dados dos Pokémon favoritos:', error);
       }
     };
-
+  
     fetchPokemons();
-  }, []);
+  }, [IDsecao]);  
 
   const [pokemons, setPokemons] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,47 +66,28 @@ function BuscaPokedex({ route, navigation }) {
   };
 
   try {
-    IDsecao = route.params.id
-    console.log(IDsecao); // Esta linha nunca será alcançada se ocorrer um erro acima
+    IDsecao = route.params.id;
+    console.log(IDsecao);
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("Cannot read property 'id' of undefined")) {
-      navigation.navigate('LoginUsuario')
+      navigation.navigate('LoginUsuario');
     } else {
-      // Outros tipos de erro
-      console.error("Ocorreu um erro:", error.message);
-    }
-  }
-  console.log(IDsecao)
-
-  //onPress={() => navigation.navigate("InfoPokemon",{id:IDsecao})}
-
-  async function alternarFav(id, nome) {
-    try {
-      const resultado = await verificarFavoritoFunc(IDsecao, id, nome);
-      console.log(resultado);
-      if (resultado == 1) {
-        await alternarFavoritoFunc(IDsecao, id, nome);
-      } else {
-        await excluirPokemonFavFunc(IDsecao, id, nome);
-      }
-      return
-    } catch (error) {
-      console.error("Erro:", error);
+      console.error('Ocorreu um erro:', error.message);
     }
   }
 
   function goBack() {
-    navigation.navigate('CadastroUsuario', { id: IDsecao })
+    navigation.navigate('CadastroUsuario', { id: IDsecao });
   }
 
   function handleVerDetalhes(pokemonId, IDsecao) {
-    navigation.navigate('InfoPokemon', { pokemon: pokemonId, id: IDsecao});
+    navigation.navigate('InfoPokemon', { pokemon: pokemonId, id: IDsecao });
   }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.pokedexTitle}>POKEDEX</Text>
+        <Text style={styles.pokedexTitle}>FAVORITOS</Text>
       </View>
       <View style={styles.buscapokedex}>
         {visiblePokemons.map((pokemon) => (
@@ -117,7 +97,7 @@ function BuscaPokedex({ route, navigation }) {
             onPress={() => handleVerDetalhes(pokemon.id, IDsecao)}
           >
             <View style={styles.cardInner}>
-              <Image style={styles.cardImage} source={pokemon.image} />
+              <Image style={styles.cardImage} source={{ uri: pokemon.image }} />
               <Text style={styles.cardText}>#{pokemon.id}</Text>
             </View>
           </TouchableOpacity>
@@ -139,7 +119,7 @@ function BuscaPokedex({ route, navigation }) {
       </View>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -225,4 +205,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BuscaPokedex;
+export default BuscaPokedexFav;

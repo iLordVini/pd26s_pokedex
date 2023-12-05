@@ -5,19 +5,20 @@ import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import StackNavigator from '../StackNavigator';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {exibirEmail, exibirNome} from "../componentes-back/funcoes";
-import { useSwipe } from '../useSwipe'
-import { useEffect, useState} from 'react';
+import { exibirEmail, exibirNome, exibirBirthday } from "../componentes-back/funcoes";
+import { useEffect, useState } from 'react';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-const CadastroUsuario = ({route ,navigation}) => {
-  let IDsecao
+const CadastroUsuario = ({ route, navigation }) => {
+  let IDsecao;
 
   const [email, setEmail] = useState('');
   const [nome, setNome] = useState('');
+  const [birthday, setBirthday] = useState('');
 
   try {
     IDsecao = route.params.id
-    console.log(id); // Esta linha nunca será alcançada se ocorrer um erro acima
+    console.log(IDsecao); // Esta linha nunca será alcançada se ocorrer um erro acima
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("Cannot read property 'id' of undefined")) {
       navigation.navigate('LoginUsuario')
@@ -26,62 +27,62 @@ const CadastroUsuario = ({route ,navigation}) => {
       console.error("Ocorreu um erro:", error.message);
     }
   }
-  console.log(IDsecao)
 
-  async function coletarInformacoe(){
+  async function coletarInformacoes() {
     setEmail(await exibirEmail(IDsecao));
     setNome(await exibirNome(IDsecao));
-    console.log(nome, email)
+    setBirthday(await exibirBirthday(IDsecao));
+    console.log(nome, email, birthday)
   }
-  coletarInformacoe()
+  coletarInformacoes()
 
-  const { onTouchStart, onTouchEnd } = useSwipe(onSwipeLeft, onSwipeRight, 6)
-
-  function onSwipeLeft(){
-    navigation.navigate('BuscaPokedex',{id:IDsecao})
-    console.log("oia aqui")
+  function goPokedex() {
+    navigation.navigate('BuscaPokedex', { id: IDsecao })
   }
 
-  function onSwipeRight(){
-    
+  function goFav() {
+    navigation.navigate('BuscaPokedexFav', { id: IDsecao })
   }
+
   return (
-    <ScrollView onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={styles.container}>
-    <View style={styles.cadastrousuario}>
-      <View style={styles.perfil} />
-      <Image
-        style={[styles.image1Icon, styles.ashk23Position]}
-        contentFit="cover"
-        source={require("../assets/image-1.png")}
-      />
-      <View style={styles.voltar} />
-      <View
-        style={[styles.cadastrousuarioChild, styles.cadastrousuarioShadowBox]}
-      />
-      <View
-        style={[styles.cadastrousuarioItem, styles.cadastrousuarioShadowBox]}
-      />
-      <View
-        style={[styles.cadastrousuarioInner, styles.cadastrousuarioShadowBox]}
-      />
-      <Text style={[styles.ashgmailcom, styles.textTypo]}>{email}</Text>
-      <Text style={[styles.eMail, styles.nomeTypo]}>E-MAIL</Text>
-      <Text style={[styles.ashDaSilva, styles.textTypo]}>{nome}</Text>
-      <Text style={[styles.nome, styles.nomeTypo]}>NOME</Text>
-      <Text style={styles.informacoesUsuario}>INFORMAÇÕES DO USUÁRIO</Text>
-      <Text style={[styles.ashk23, styles.ashk23Typo]}>{nome}</Text>
-      <Text style={[styles.voltar1, styles.ashk23Typo]}>VOLTAR</Text>
-      <View style={[styles.lineView, styles.lineViewPosition]} />
-      <View style={[styles.cadastrousuarioChild1, styles.lineViewPosition]} />
-      <Image
-        style={styles.starIcon}
-        contentFit="cover"
-        source={require("../assets/star-1.png")}
-      />
-      <Text style={[styles.verPokemonsFavoritos, styles.verPokemonsFavoritos]}>
-        VER POKÉMON’S FAVORITOS
-      </Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <View style={styles.cadastrousuario}>
+        <View style={styles.perfil} />
+        <Image
+          style={[styles.image1Icon, styles.ashk23Position]}
+          contentFit="cover"
+          source={require("../assets/image-1.png")}
+        />
+        <TouchableOpacity style={styles.starIcon} onPress={goFav}>
+          <Image
+            style={styles.starIcon}
+            contentFit="cover"
+            source={require("../assets/star-1.png")}
+          />
+        </TouchableOpacity>
+        <View style={[styles.cadastrousuarioChild, styles.cadastrousuarioShadowBox]} />
+        <View style={[styles.cadastrousuarioItem, styles.cadastrousuarioShadowBox]} />
+        <View style={[styles.cadastrousuarioInner, styles.cadastrousuarioShadowBox]} />
+        <Text style={[styles.ashgmailcom, styles.textTypo]}>{email}</Text>
+        <Text style={[styles.eMail, styles.nomeTypo]}>E-MAIL</Text>
+        <Text style={[styles.text, styles.textTypo]}>{birthday}</Text>
+        <Text style={[styles.dataDeNascimento, styles.nomeTypo]}>DATA DE NASCIMENTO</Text>
+        <Text style={[styles.ashDaSilva, styles.textTypo]}>{nome}</Text>
+        <Text style={[styles.nome, styles.nomeTypo]}>NOME</Text>
+        <Text style={[styles.userid484, styles.ashk23Typo]}>UID: {IDsecao}</Text>
+        <Text style={styles.informacoesUsuario}>INFORMAÇÕES DO USUÁRIO</Text>
+        <Text style={[styles.ashk23, styles.ashk23Typo]}>{nome}</Text>
+        <View style={[styles.lineView, styles.lineViewPosition]} />
+        <View style={[styles.cadastrousuarioChild1, styles.lineViewPosition]} />
+        <Text style={[styles.verPokemonsFavoritos, styles.verPokemonsFavoritos]}>
+          VER POKÉMON’S FAVORITOS
+        </Text>
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={() => goPokedex()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>POKEDEX</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -113,6 +114,30 @@ const styles = StyleSheet.create({
     shadowColor: "rgba(0, 0, 0, 0.25)",
     borderRadius: Border.br_17xl,
     position: "absolute",
+  },
+  dataDeNascimento: {
+    top: 637,
+    width: 350,
+    left: 62,
+    fontWeight: "700",
+  },
+  footer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -75,
+    paddingBottom: 8,
+  },
+  backButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Color.colorBlack,
+    borderRadius: Border.br_17xl,
+  },
+  backButtonText: {
+    fontSize: FontSize.size_9xl,
+    color: Color.colorWhite,
+    fontFamily: FontFamily.barlowBold,
+    fontWeight: '700',
   },
   textTypo: {
     color: Color.colorBlack,
@@ -163,10 +188,10 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   voltar: {
-    top: 736,
+    top: 740,
     left: 97,
     width: 181,
-    height: 57,
+    height: 50,
     shadowOpacity: 1,
     elevation: 4,
     shadowRadius: 4,
@@ -190,12 +215,12 @@ const styles = StyleSheet.create({
   },
   ashgmailcom: {
     top: 595,
-    width: 164,
+    width: 250,
     textAlign: "left",
   },
   eMail: {
     top: 565,
-    width: 100,
+    width: 250,
     left: 62,
     fontWeight: "700",
   },
@@ -213,11 +238,10 @@ const styles = StyleSheet.create({
   nome: {
     top: 494,
     left: 64,
-    width: 54,
+    width: 250,
   },
   informacoesUsuario: {
     marginTop: 6.5,
-    marginLeft: -152.5,
     top: "50%",
     fontSize: FontSize.size_3xl,
     display: "flex",
@@ -226,7 +250,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 33,
     textAlign: "center",
-    left: "50%",
+    left: "10%",
     fontFamily: FontFamily.barlowBold,
     fontWeight: "700",
     color: Color.colorBlack,
@@ -234,22 +258,22 @@ const styles = StyleSheet.create({
   },
   userid484: {
     top: 284,
-    fontSize: FontSize.size_sm,
+    fontSize: 10,
+    paddingTop: 5,
     color: Color.colorWhite,
     textAlign: "center",
-    width: 240,
-    left: 75,
+    width: 300,
+    left: 45,
   },
   ashk23: {
     top: 239,
-    fontSize: FontSize.size_21xl,
+    fontSize: 35,
     textAlign: "center",
-    width: 240,
-    left: 75,
+    width: 385,
   },
   voltar1: {
-    top: 748,
-    left: 138,
+    top: 746,
+    left: 126,
     fontSize: FontSize.size_9xl,
     textAlign: "left",
   },

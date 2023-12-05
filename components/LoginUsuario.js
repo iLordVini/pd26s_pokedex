@@ -1,57 +1,81 @@
 import * as React from "react";
-import { StyleSheet, View, Text, ScrollView, Button } from "react-native";
-import { Image } from "expo-image";
-import { Border, Color, FontFamily, FontSize, } from "../GlobalStyles";
-import { TextInput } from "react-native-gesture-handler";
-import { useEffect, useState} from 'react';
-import { initializeApp, apps, lenght } from "firebase/app";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getDatabase, ref, onValue, set, update, remove, push, orderByValue, limitToLast, once} from "firebase/database";
-import firebase_db from '../src/firebaseconfig';
-import {cadastrarUsuarioFunc, logarUsuarioFunc} from '../componentes-back/funcoes'
-import { useRoute } from "@react-navigation/core";
-import StackNavigator from '../StackNavigator';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
+import { logarUsuarioFunc } from '../componentes-back/funcoes';
 
+function LogarUsuario({ navigation }) {
+  const [email, setEmail] = React.useState('vini@teste.com');
+  const [senha, setSenha] = React.useState('123456');
 
-function LogarUsuario ({navigation}){
-
-  //var [nome, setNome] = useState('');
-  var [email, setEmail] = useState('');
-  var [senha, setSenha] = useState('');
-
-  //const { itemID } = useRoute(route)
-  //onsole.log(route.params.id)
-  //alert(itemID)
-
-  async function logarUsuarioI(){
-    var secao = await logarUsuarioFunc(email, senha);
-    console.log(secao)
-    if (secao != 1){
-      navigation.navigate("BuscaPokedex",{id: secao})
+  const logarUsuarioI = async () => {
+    const secao = await logarUsuarioFunc(email, senha);
+    if (secao !== 1) {
+      navigation.navigate("BuscaPokedex", { id: secao });
     }
-  }
-  
+  };
+
   return (
-    <View style={StyleSheet.container}>
-        <Text style={{fontSize:30}}>Email:</Text>
-        <TextInput value={email} onChangeText={(texto) => setEmail(texto)} style={styles.input} placeholder='Insira seu Email'/> 
-        <Text style={{fontSize:30}}>Senha:</Text>
-        <TextInput value={senha} onChangeText={(texto) => setSenha(texto)} style={styles.input} placeholder='Insira sua Senha'/> 
-        <Button title="Logar" onPress={logarUsuarioI}/>
-        <Button title="Cadastrar Usuário" onPress={() => navigation.navigate("CadastrarUsuario")}/>
+    <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="E-mail"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        value={senha}
+        onChangeText={(text) => setSenha(text)}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.loginButton} onPress={logarUsuarioI}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("CadastrarUsuario")}>
+        <Text style={styles.signupText}>Ainda não tem uma conta? Cadastre-se</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input:{
-    fontSize:20,
-    margin:10,
-    borderColor:'#000',
-    borderWidth: 2,
-    height:40,
-    padding:10
-  }
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: Color.colorWhite,
+  },
+  title: {
+    fontSize: FontSize.size_3xl,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: Color.colorBlack,
+  },
+  input: {
+    height: 40,
+    borderColor: Color.colorBlack,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingLeft: 10,
+  },
+  loginButton: {
+    backgroundColor: Color.colorBlack,
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: Color.colorWhite,
+    textAlign: 'center',
+  },
+  signupText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: Color.colorBlack,
+  },
+});
 
 export default LogarUsuario;
