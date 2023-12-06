@@ -6,8 +6,8 @@ import { logarUsuarioFunc } from '../componentes-back/Functions';
 LogBox.ignoreLogs(['@firebase/auth']);
 
 function LogarUsuario({ navigation }) {
-  const [email, setEmail] = React.useState('vini@teste.com');
-  const [senha, setSenha] = React.useState('123456');
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState('');
 
   const logarUsuarioI = async () => {
     const secao = await logarUsuarioFunc(email, senha);
